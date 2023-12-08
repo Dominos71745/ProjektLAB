@@ -7,7 +7,8 @@ var connectionString = builder.Configuration.GetConnectionString("ApplicationDBC
 builder.Services.AddDbContext<ApplicationDBContext>(options =>
     options.UseSqlServer(connectionString));
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDBContext>();
 
 
@@ -34,5 +35,8 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+
+
 
 app.Run();

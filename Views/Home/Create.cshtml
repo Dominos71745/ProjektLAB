@@ -1,0 +1,25 @@
+﻿@model ProjektLAB.Models.Dane.Cars
+@{
+    ViewData["Title"] = "Create";
+}
+
+
+<h2>Create a New Car</h2>
+
+<form asp-action="Create" method="post">
+    <div>
+        <label asp-for="CategoryName">Category:</label>
+        <select asp-for="CategoryId" asp-items="@(ViewBag.Categories != null ? new SelectList(ViewBag.Categories, "CategoryId", "CategoryName") : Enumerable.Empty<SelectListItem>())"></select>
+    </div>
+    <div>
+        <label asp-for="Brand">Brand:</label>
+        <input asp-for="Brand" />
+    </div>
+    <div>
+        <label asp-for="Model">Model:</label>
+        <input asp-for="Model" />
+    </div>
+    <!-- Add other form fields as needed -->
+
+    <button type="submit">Create Car</button>
+</form>
