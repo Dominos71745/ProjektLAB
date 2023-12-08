@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjektLAB.Areas.Identity.Data;
 
@@ -11,9 +12,10 @@ using ProjektLAB.Areas.Identity.Data;
 namespace ProjektLAB.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20231207205147_UpdateDatabase")]
+    partial class UpdateDatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -245,10 +247,6 @@ namespace ProjektLAB.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CategoryName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Model")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -268,16 +266,11 @@ namespace ProjektLAB.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"), 1L, 1);
 
-                    b.Property<int?>("CarsCarId")
-                        .HasColumnType("int");
-
                     b.Property<string>("CategoryName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("CategoryId");
-
-                    b.HasIndex("CarsCarId");
 
                     b.ToTable("Categories");
                 });
@@ -411,13 +404,6 @@ namespace ProjektLAB.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("ProjektLAB.Models.Dane+Categories", b =>
-                {
-                    b.HasOne("ProjektLAB.Models.Dane+Cars", null)
-                        .WithMany("Categories")
-                        .HasForeignKey("CarsCarId");
-                });
-
             modelBuilder.Entity("ProjektLAB.Models.Dane+Orders", b =>
                 {
                     b.HasOne("ProjektLAB.Models.Dane+Cars", "Car")
@@ -439,8 +425,6 @@ namespace ProjektLAB.Migrations
 
             modelBuilder.Entity("ProjektLAB.Models.Dane+Cars", b =>
                 {
-                    b.Navigation("Categories");
-
                     b.Navigation("Orders");
                 });
 

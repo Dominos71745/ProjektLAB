@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjektLAB.Areas.Identity.Data;
 
@@ -11,9 +12,10 @@ using ProjektLAB.Areas.Identity.Data;
 namespace ProjektLAB.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20231205174530_Inital Create")]
+    partial class InitalCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -230,7 +232,7 @@ namespace ProjektLAB.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("ProjektLAB.Models.Dane+Cars", b =>
+            modelBuilder.Entity("ProjektLAB.Models.Dane+Car", b =>
                 {
                     b.Property<int>("CarId")
                         .ValueGeneratedOnAdd()
@@ -242,47 +244,16 @@ namespace ProjektLAB.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CategoryName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Model")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("CarId");
 
-                    b.HasIndex("CategoryId");
-
                     b.ToTable("Cars");
                 });
 
-            modelBuilder.Entity("ProjektLAB.Models.Dane+Categories", b =>
-                {
-                    b.Property<int>("CategoryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"), 1L, 1);
-
-                    b.Property<int?>("CarsCarId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CategoryName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("CategoryId");
-
-                    b.HasIndex("CarsCarId");
-
-                    b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("ProjektLAB.Models.Dane+Clients", b =>
+            modelBuilder.Entity("ProjektLAB.Models.Dane+Client", b =>
                 {
                     b.Property<int>("ClientId")
                         .ValueGeneratedOnAdd()
@@ -323,16 +294,13 @@ namespace ProjektLAB.Migrations
                     b.ToTable("Clients");
                 });
 
-            modelBuilder.Entity("ProjektLAB.Models.Dane+Orders", b =>
+            modelBuilder.Entity("ProjektLAB.Models.Dane+Order", b =>
                 {
                     b.Property<int>("OrderId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"), 1L, 1);
-
-                    b.Property<int>("CarId")
-                        .HasColumnType("int");
 
                     b.Property<int>("ClientId")
                         .HasColumnType("int");
@@ -341,8 +309,6 @@ namespace ProjektLAB.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("OrderId");
-
-                    b.HasIndex("CarId");
 
                     b.HasIndex("ClientId");
 
@@ -400,56 +366,18 @@ namespace ProjektLAB.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ProjektLAB.Models.Dane+Cars", b =>
+            modelBuilder.Entity("ProjektLAB.Models.Dane+Order", b =>
                 {
-                    b.HasOne("ProjektLAB.Models.Dane+Categories", "Category")
-                        .WithMany("Cars")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("ProjektLAB.Models.Dane+Categories", b =>
-                {
-                    b.HasOne("ProjektLAB.Models.Dane+Cars", null)
-                        .WithMany("Categories")
-                        .HasForeignKey("CarsCarId");
-                });
-
-            modelBuilder.Entity("ProjektLAB.Models.Dane+Orders", b =>
-                {
-                    b.HasOne("ProjektLAB.Models.Dane+Cars", "Car")
-                        .WithMany("Orders")
-                        .HasForeignKey("CarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProjektLAB.Models.Dane+Clients", "Client")
+                    b.HasOne("ProjektLAB.Models.Dane+Client", "Client")
                         .WithMany("Orders")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Car");
-
                     b.Navigation("Client");
                 });
 
-            modelBuilder.Entity("ProjektLAB.Models.Dane+Cars", b =>
-                {
-                    b.Navigation("Categories");
-
-                    b.Navigation("Orders");
-                });
-
-            modelBuilder.Entity("ProjektLAB.Models.Dane+Categories", b =>
-                {
-                    b.Navigation("Cars");
-                });
-
-            modelBuilder.Entity("ProjektLAB.Models.Dane+Clients", b =>
+            modelBuilder.Entity("ProjektLAB.Models.Dane+Client", b =>
                 {
                     b.Navigation("Orders");
                 });
