@@ -12,8 +12,8 @@ using ProjektLAB.Areas.Identity.Data;
 namespace ProjektLAB.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20231207205147_UpdateDatabase")]
-    partial class UpdateDatabase
+    [Migration("20231222160659_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -247,6 +247,10 @@ namespace ProjektLAB.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Model")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -266,22 +270,28 @@ namespace ProjektLAB.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"), 1L, 1);
 
+                    b.Property<int?>("CarsCarId")
+                        .HasColumnType("int");
+
                     b.Property<string>("CategoryName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("CategoryId");
 
+                    b.HasIndex("CarsCarId");
+
                     b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("ProjektLAB.Models.Dane+Clients", b =>
                 {
-                    b.Property<int>("ClientId")
+                    b.Property<string>("ClientId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ClientId"), 1L, 1);
+                    b.Property<int>("CarId")
+                        .HasColumnType("int");
 
                     b.Property<string>("City")
                         .IsRequired()
@@ -313,6 +323,8 @@ namespace ProjektLAB.Migrations
 
                     b.HasKey("ClientId");
 
+                    b.HasIndex("CarId");
+
                     b.ToTable("Clients");
                 });
 
@@ -327,17 +339,28 @@ namespace ProjektLAB.Migrations
                     b.Property<int>("CarId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ClientId")
-                        .HasColumnType("int");
+                    b.Property<string>("ClientId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("PickupDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ReturnDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("OrderId");
 
                     b.HasIndex("CarId");
 
                     b.HasIndex("ClientId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Orders");
                 });
@@ -404,6 +427,24 @@ namespace ProjektLAB.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("ProjektLAB.Models.Dane+Categories", b =>
+                {
+                    b.HasOne("ProjektLAB.Models.Dane+Cars", null)
+                        .WithMany("Categories")
+                        .HasForeignKey("CarsCarId");
+                });
+
+            modelBuilder.Entity("ProjektLAB.Models.Dane+Clients", b =>
+                {
+                    b.HasOne("ProjektLAB.Models.Dane+Cars", "Car")
+                        .WithMany("Clients")
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Car");
+                });
+
             modelBuilder.Entity("ProjektLAB.Models.Dane+Orders", b =>
                 {
                     b.HasOne("ProjektLAB.Models.Dane+Cars", "Car")
@@ -414,17 +455,26 @@ namespace ProjektLAB.Migrations
 
                     b.HasOne("ProjektLAB.Models.Dane+Clients", "Client")
                         .WithMany("Orders")
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ClientId");
+
+                    b.HasOne("ProjektLAB.Areas.Identity.Data.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Car");
 
                     b.Navigation("Client");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ProjektLAB.Models.Dane+Cars", b =>
                 {
+                    b.Navigation("Categories");
+
+                    b.Navigation("Clients");
+
                     b.Navigation("Orders");
                 });
 

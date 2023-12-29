@@ -4,7 +4,7 @@
 
 namespace ProjektLAB.Migrations
 {
-    public partial class Initial1 : Migration
+    public partial class UpdatedModels2 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

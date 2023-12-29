@@ -1,0 +1,44 @@
+﻿@using System.Security.Claims
+@model ProjektLAB.Models.ViewModels.ReservationViewModel
+
+@{
+    ViewData["Title"] = "ReservationResult";
+}
+
+<h2>Rental Details.</h2>
+
+@if (User.Identity.IsAuthenticated)
+{
+    <p>Thank you, @User.FindFirstValue(ClaimTypes.Email), for renting the car @($"{Model.Car.Brand} {Model.Car.Model}").</p>
+}
+else
+{
+    <p>Thank you, @Model.Client.Email, for renting the car @($"{Model.Car.Brand} {Model.Car.Model}").</p>
+    <p>Your details:</p>
+    <dl>
+        <dt>Name and Surname:</dt>
+        <dd>@($"{Model.Client.FirstName} {Model.Client.LastName}")</dd>
+
+        <dt>Street:</dt>
+        <dd>@Model.Client.Street</dd>
+
+        <dt>Postal Code:</dt>
+        <dd>@Model.Client.PostCode</dd>
+
+        <dt>City:</dt>
+        <dd>@Model.Client.City</dd>
+
+        <dt>Phone Number:</dt>
+        <dd>@Model.Client.PhoneNumber</dd>
+
+        <dt>Email:</dt>
+        <dd>@Model.Client.Email</dd>
+    </dl>
+
+    <div>
+        <p>If you don't have an account yet, click <a href="/Identity/Account/Register">here</a> to register.</p>        
+        <p>By registering, you'll gain access to many benefits, such as faster order placement and easier management of contact information.</p>
+    </div>
+}
+
+<p><a asp-action="Index">Return to the homepage</a></p>

@@ -20,15 +20,15 @@ namespace ProjektLAB.Areas.Identity.Data
         public DbSet<Clients> Clients { get; set; }
         public DbSet<Orders> Orders { get; set; }
 
+        // Relacje
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
             builder.Entity<Cars>()
-          .HasOne(c => c.Category)
-          .WithMany(v => v.Cars)
-          .HasForeignKey(c => c.CategoryId);
-
+                .HasOne(c => c.Category)
+                .WithMany(v => v.Cars)
+                .HasForeignKey(c => c.CategoryId);
 
             builder.Entity<Orders>()
                 .HasOne(o => o.Client)
@@ -36,13 +36,28 @@ namespace ProjektLAB.Areas.Identity.Data
                 .HasForeignKey(o => o.ClientId);
 
             builder.Entity<Orders>()
-                .HasOne(o => o.Car)
-                .WithMany(c => c.Orders)
-                .HasForeignKey(o => o.CarId);
+                .HasOne(o => o.User)
+                .WithMany()
+                .HasForeignKey(o => o.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+
+            builder.Entity<Orders>()
+                 .HasOne(o => o.Car)
+                 .WithMany(c => c.Orders)
+                 .HasForeignKey(o => o.CarId);
+
+            builder.Entity<Clients>()
+                .HasOne(c => c.Car)
+                .WithMany(o => o.Clients)
+                .HasForeignKey(c => c.CarId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
 
             builder.Entity<Cars>().HasKey(c => new { c.CarId });
             builder.Entity<Clients>().HasKey(c => new { c.ClientId });
         }
+
 
         private class ApplicationUserEntityConfiguration :
             IEntityTypeConfiguration<ApplicationUser>
@@ -51,6 +66,9 @@ namespace ProjektLAB.Areas.Identity.Data
             {
                 builder.Property(x => x.FirstName).HasMaxLength(255);
                 builder.Property(x => x.LastName).HasMaxLength(255);
+                builder.Property(x => x.Street).HasMaxLength(255);
+                builder.Property(x => x.Postcode).HasMaxLength(255);
+                builder.Property(x => x.City).HasMaxLength(255);
             }
         }
     }

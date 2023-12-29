@@ -1,24 +1,26 @@
 ﻿@model List<ProjektLAB.Models.Dane.Cars>
 
-    @{
+@{
     ViewData["Title"] = "Home";
 }
 
-
-<h2>Welcome to the Car Listings Page!</h2>
+<h1>Find a car for yourself!</h1>
 
 @if (User.IsInRole("Administrator"))
 {
-    <!-- Only show this link to users in the Admin role -->
-    <a asp-action="Create">Add a New Car</a>
+    <a asp-action="Create">Add a new car</a>
 }
 
 @foreach (var car in Model)
 {
     <div>
         <h3>@car.Brand @car.Model</h3>
-        <!-- Add other car details as needed -->
-        <!-- Only show these links to users in the Admin role -->
+        
+        @if (!User.IsInRole("Administrator"))
+        {
+            <a asp-action="Reservation" asp-route-id="@car.CarId">Rent</a>
+        }
+        
         @if (User.IsInRole("Administrator"))
         {
             <a asp-action="Edit" asp-route-id="@car.CarId">Edit</a>
