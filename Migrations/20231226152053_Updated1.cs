@@ -4,7 +4,7 @@
 
 namespace ProjektLAB.Migrations
 {
-    public partial class RemoveCategoryIdFromCars : Migration
+    public partial class Updated1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

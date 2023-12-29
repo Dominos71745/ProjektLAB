@@ -3,8 +3,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ProjektLAB.Areas.Identity.Data;
 using ProjektLAB.Models;
+using ProjektLAB.Models.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using static ProjektLAB.Models.Dane;
 
@@ -26,7 +30,6 @@ namespace ProjektLAB.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            // Add admin user
             await CreateAdminUser();
 
             var cars = _context.Cars.ToList();
@@ -34,6 +37,7 @@ namespace ProjektLAB.Controllers
             return View(cars);
         }
 
+        // Wyświetlanie samochodów na stronie
         [AllowAnonymous]
         public IActionResult Details(int id)
         {
@@ -45,10 +49,10 @@ namespace ProjektLAB.Controllers
         public IActionResult Create()
         {
             ViewBag.Categories = _context.Categories.ToList();
-            // Provide a form to add a new car
             return View();
         }
 
+        // Dodawanie samochodów przez admina
         [HttpPost]
         [Authorize(Roles = "Administrator")]
         public IActionResult Create(Cars car)
@@ -74,6 +78,134 @@ namespace ProjektLAB.Controllers
             return RedirectToAction("Index");
         }
 
+        public async Task<IActionResult> Reservation(int id)
+        {
+            var car = _context.Cars.Find(id);
+            if (car == null)
+            {
+                ModelState.AddModelError("CarId", "Invalid car selected.");
+                return View(car);
+            }
+
+            ApplicationUser user = await _userManager.GetUserAsync(User);
+
+            var viewModel = new ReservationViewModel
+            {
+                Car = car,
+                Client = new Clients(), 
+                User = user
+            };
+
+            return View("Reservation", viewModel);
+        }
+
+        // Logika rezerwacji dla użytkowników zalogowanych i nie zalogowanych
+        [HttpPost]
+        public IActionResult Reservation(ReservationViewModel viewModel)
+        {
+
+            int carId = viewModel.Car.CarId;
+            var existingCar = _context.Cars.Find(carId);
+            viewModel.Car = existingCar;
+            var category = viewModel.Car.Category;
+
+            if (!ModelState.IsValid)
+            {
+                return View(viewModel);
+            }
+
+            if (User.Identity.IsAuthenticated) 
+            {
+               
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                ApplicationUser user = new ApplicationUser
+                {
+                    Id = userId,
+                    FirstName = viewModel.User.FirstName,
+                    LastName = viewModel.User.LastName,
+                    Email = viewModel.User.Email,
+                    Street = viewModel.User.Street,
+                    Postcode = viewModel.User.Postcode,
+                    City = viewModel.User.City,
+                };
+
+                var loggedInResultViewModel = new ReservationViewModel
+                {
+                    Car = existingCar,
+                    User = user
+                };
+
+
+                Orders order = new Orders
+                {
+                    OrderDate = DateTime.Now,
+                    UserId = viewModel.User.Id,
+                    ClientId = null,
+                    CarId = carId,
+                    PickupDate = viewModel.Order.PickupDate,
+                    ReturnDate = viewModel.Order.ReturnDate
+                };
+
+                // Add the order to the database
+                _context.Orders.Add(order);
+                _context.SaveChanges();
+
+                return View("ReservationResult", loggedInResultViewModel);
+            } else 
+            {
+                var client = new Clients
+                {
+                    ClientId = Guid.NewGuid().ToString(),
+                    FirstName = viewModel.Client.FirstName,
+                    LastName = viewModel.Client.LastName,
+                    Street = viewModel.Client.Street,
+                    PostCode = viewModel.Client.PostCode,
+                    City = viewModel.Client.City,
+                    PhoneNumber = viewModel.Client.PhoneNumber,
+                    Email = viewModel.Client.Email,
+                    CarId = carId,
+                };
+
+                _context.Clients.Add(client);
+                _context.SaveChanges();
+
+                if (existingCar == null)
+                {
+                    ModelState.AddModelError("CategoryId", "Invalid car selected.");
+                    return View(existingCar);
+                }
+
+                Orders order = new Orders
+                {
+                    OrderDate = DateTime.Now,
+                    ClientId = client.ClientId,
+                    UserId = null,
+                    CarId = carId,
+                    PickupDate = viewModel.Order.PickupDate,
+                    ReturnDate = viewModel.Order.ReturnDate
+                };
+
+                var notLoggedInResultViewModel = new ReservationViewModel
+                {
+                    Client = client,
+                    Car = existingCar
+                };
+
+                _context.Orders.Add(order);
+                _context.SaveChanges();
+             
+                return View("ReservationResult", notLoggedInResultViewModel);
+            }
+        }
+
+        // Wyświetlanie wyniku rezerwacji
+        public IActionResult ReservationResult(ReservationViewModel viewModel)
+        {
+            return View(viewModel);
+        }
+
+
         [Authorize(Roles = "Administrator")]
         public IActionResult Edit(int id)
         {
@@ -81,7 +213,8 @@ namespace ProjektLAB.Controllers
             var car = _context.Cars.Find(id);
             return View(car);
         }
-
+        
+        // Edycja samochodów przez admina
         [HttpPost]
         [Authorize(Roles = "Administrator")]
         public IActionResult Edit(Cars car)
@@ -100,7 +233,6 @@ namespace ProjektLAB.Controllers
             {
                 car.CategoryName = selectedCategory.CategoryName;
             }
-            // Update an existing car in the database
             _context.Cars.Update(car);
             _context.SaveChanges();
 
@@ -110,16 +242,15 @@ namespace ProjektLAB.Controllers
         [Authorize(Roles = "Administrator")]
         public IActionResult Delete(int id)
         {
-            // Provide a confirmation page to delete a car
             var car = _context.Cars.Find(id);
             return View(car);
         }
 
+        // Usuwanie samochodów przez admina
         [HttpPost, ActionName("Delete")]
         [Authorize(Roles = "Administrator")]
         public IActionResult DeleteConfirmed(int id)
         {
-            // Delete an existing car from the database
             var car = _context.Cars.Find(id);
             _context.Cars.Remove(car);
             _context.SaveChanges();
@@ -127,35 +258,33 @@ namespace ProjektLAB.Controllers
             return RedirectToAction("Index");
         }
 
+        // Tworzenie administratora
         private async Task CreateAdminUser()
         {
             string roleName = "Administrator";
             IdentityResult roleResult;
 
-            // Check if the Administrator role already exists
+            // Sprawdzanie czy rola administatora istnieje
             var roleExist = await _roleManager.RoleExistsAsync(roleName);
 
             if (!roleExist)
             {
-                // If not, create the role
                 roleResult = await _roleManager.CreateAsync(new IdentityRole(roleName));
             }
 
-            // Check if the admin user already exists
+            // Sprawdzanie czy użytkownik "administator" istnieje
             var user = await _userManager.FindByEmailAsync("admin@example.com");
 
             if (user == null)
             {
-                // If not, create a new user
                 user = new ApplicationUser()
                 {
-                    UserName = "admin@example.com",
-                    Email = "admin@example.com",
+                    UserName = "admin@admin.pl",
+                    Email = "admin@admin.pl",
                 };
                 await _userManager.CreateAsync(user, "Admin123@");
             }
 
-            // Add the admin user to the Administrator role if not already a member
             if (!await _userManager.IsInRoleAsync(user, roleName))
             {
                 await _userManager.AddToRoleAsync(user, roleName);

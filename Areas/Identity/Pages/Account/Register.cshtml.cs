@@ -106,6 +106,12 @@ namespace ProjektLAB.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+            [Required(ErrorMessage = "Please enter your street")]
+            public string Street { get; set; }
+            [Required(ErrorMessage = "Please enter your postal code")]
+            public string PostCode { get; set; }
+            [Required(ErrorMessage = "Please enter your city")]
+            public string City { get; set; }
         }
 
 
@@ -125,6 +131,9 @@ namespace ProjektLAB.Areas.Identity.Pages.Account
 
                 user.FirstName = Input.FirstName;
                 user.LastName = Input.LastName;
+                user.Street = Input.Street;
+                user.Postcode = Input.PostCode;
+                user.City = Input.City;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);

@@ -1,0 +1,87 @@
+﻿@using System.Security.Claims
+
+@model ProjektLAB.Models.ViewModels.ReservationViewModel
+
+@{
+    ViewData["Title"] = "Reservation";
+}
+
+<h1>@($"{Model.Car.Brand} {Model.Car.Model}") - long and short-term rental.</h1>
+
+@if (User.Identity.IsAuthenticated)
+{
+    <form asp-action="Reservation" method="post">
+        <input type="hidden" asp-for="User.Id" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)" />
+        <input type="hidden" asp-for="Car.CarId" />
+                            <div asp-validation-summary="All">
+        <div>
+            <label asp-for="Order.PickupDate">Pickup Date:</label>
+            <input type="date" asp-for="Order.PickupDate" format="yyyy-MM-dd" />
+            <span asp-validation-for="Order.PickupDate" class="text-danger"></span>
+        </div>
+        <div>
+            <label asp-for="Order.ReturnDate">Return Date:</label>
+            <input type="date" asp-for="Order.ReturnDate" format="yyyy-MM-dd" />
+            <span asp-validation-for="Order.ReturnDate" class="text-danger"></span>
+        </div>
+
+        <button type="submit">Rent</button>
+        </div>
+    </form>
+}
+else
+{
+    <form asp-action="Reservation" method="post" >
+        <input type="hidden" asp-for="Car.CarId" />
+
+                    <div asp-validation-summary="All">
+        <div>
+            <label asp-for="Order.PickupDate">Pickup Date:</label>
+            <input type="date" asp-for="Order.PickupDate" format="yyyy-MM-dd" />
+            <span asp-validation-for="Order.PickupDate" class="text-danger"></span>
+        </div>
+        <div>
+            <label asp-for="Order.ReturnDate">Return Date:</label>
+            <input type="date" asp-for="Order.ReturnDate" format="yyyy-MM-dd" />
+            <span asp-validation-for="Order.ReturnDate" class="text-danger"></span>
+        </div>
+
+            <div>
+                <label asp-for="Client.FirstName">First Name:</label>
+                <input asp-for="Client.FirstName" />
+                <span asp-validation-for="Client.FirstName" class="text-danger"></span>
+            </div>
+            <div>
+                <label asp-for="Client.LastName">Last Name:</label>
+                <input asp-for="Client.LastName" />
+                <span asp-validation-for="Client.LastName" class="text-danger"></span>
+            </div>
+            <div>
+                <label asp-for="Client.Street">Street:</label>
+                <input asp-for="Client.Street" />
+                <span asp-validation-for="Client.Street" class="text-danger"></span>
+            </div>
+            <div>
+                <label asp-for="Client.PostCode">Postal Code:</label>
+                <input asp-for="Client.PostCode" />
+                <span asp-validation-for="Client.PostCode" class="text-danger"></span>
+            </div>
+            <div>
+                <label asp-for="Client.City">City:</label>
+                <input asp-for="Client.City" />
+                <span asp-validation-for="Client.City" class="text-danger"></span>
+            </div>
+            <div>
+                <label asp-for="Client.PhoneNumber">Phone Number:</label>
+                <input asp-for="Client.PhoneNumber" />
+                <span asp-validation-for="Client.PhoneNumber" class="text-danger"></span>
+            </div>
+            <div>
+                <label asp-for="Client.Email">Email:</label>
+                <input asp-for="Client.Email" />
+                <span asp-validation-for="Client.Email" class="text-danger"></span>
+            </div>
+            </div>
+            <button type="submit">Rent</button>
+    </form>
+}

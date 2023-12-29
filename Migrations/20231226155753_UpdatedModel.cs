@@ -4,9 +4,24 @@
 
 namespace ProjektLAB.Migrations
 {
-    public partial class Initial2 : Migration
+    public partial class UpdatedModel : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropForeignKey(
+                name: "FK_Categories_Cars_CarsCarId",
+                table: "Categories");
+
+            migrationBuilder.DropIndex(
+                name: "IX_Categories_CarsCarId",
+                table: "Categories");
+
+            migrationBuilder.DropColumn(
+                name: "CarsCarId",
+                table: "Categories");
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<int>(
                 name: "CarsCarId",
@@ -25,21 +40,6 @@ namespace ProjektLAB.Migrations
                 column: "CarsCarId",
                 principalTable: "Cars",
                 principalColumn: "CarId");
-        }
-
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Categories_Cars_CarsCarId",
-                table: "Categories");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Categories_CarsCarId",
-                table: "Categories");
-
-            migrationBuilder.DropColumn(
-                name: "CarsCarId",
-                table: "Categories");
         }
     }
 }
