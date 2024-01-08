@@ -10,12 +10,23 @@
 @if (User.Identity.IsAuthenticated)
 {
     <p>Thank you, @User.FindFirstValue(ClaimTypes.Email), for renting the car @($"{Model.Car.Brand} {Model.Car.Model}").</p>
+        <dt>Pickup Date:</dt>
+        <dd>@(Model.Order.PickupDate.Value.ToString("yyyy-MM-dd"))</dd>
+
+        <dt>Return Date:</dt>
+        <dd>@(Model.Order.ReturnDate.ToString("yyyy-MM-dd"))</dd>
 }
 else
 {
     <p>Thank you, @Model.Client.Email, for renting the car @($"{Model.Car.Brand} {Model.Car.Model}").</p>
     <p>Your details:</p>
     <dl>
+        <dt>Pickup Date:</dt>
+        <dd>@(Model.Order.PickupDate.Value.ToString("yyyy-MM-dd"))</dd>
+
+        <dt>Return Date:</dt>
+        <dd>@(Model.Order.ReturnDate.ToString("yyyy-MM-dd"))</dd>
+
         <dt>Name and Surname:</dt>
         <dd>@($"{Model.Client.FirstName} {Model.Client.LastName}")</dd>
 

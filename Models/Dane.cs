@@ -24,7 +24,6 @@ namespace ProjektLAB.Models
             public int CategoryId { get; set; }
             public string? CategoryName { get; set; }
             public Categories? Category { get; set; }
-            public ICollection<Clients>? Clients { get; set; }
             public ICollection<Orders>? Orders { get; set; }
         }
 
@@ -44,14 +43,12 @@ namespace ProjektLAB.Models
             [Required(ErrorMessage = "Please enter your city")]
             public string City { get; set; }
             [Required(ErrorMessage = "Please enter your phone number")]
-            [Phone(ErrorMessage = "Please provide a valid phone number")]
+            [RegularExpression("(?<!\\w)(\\(?(\\+|00)?48\\)?)?[ -]?\\d{3}[ -]?\\d{3}[ -]?\\d{3}(?!\\w)", ErrorMessage = "Please provide a valid phone number")]
             public string PhoneNumber { get; set; }
             [Required(ErrorMessage = "Please enter your email")]
             [RegularExpression(".+\\@.+\\.[a-z]{2,3}", ErrorMessage = "Please provide a valid email address")]
             [EmailAddress]
             public string Email { get; set; }
-            public int CarId { get; set; }
-            public Cars? Car { get; set; }  
             public ICollection<Orders>? Orders { get; set; }
         }
 
@@ -68,7 +65,7 @@ namespace ProjektLAB.Models
             public Cars? Car {  get; set; }
             [Required(ErrorMessage = "Please enter a pickup date")]
             [DataType(DataType.Date, ErrorMessage = "Invalid date format")]
-            public DateTime PickupDate { get; set; }
+            public DateTime? PickupDate { get; set; }
             [Required(ErrorMessage = "Please enter return date")]
             [DataType(DataType.Date, ErrorMessage = "Invalid date format")]
             public DateTime ReturnDate { get; set; }

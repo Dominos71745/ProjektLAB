@@ -41,18 +41,10 @@ namespace ProjektLAB.Areas.Identity.Data
                 .HasForeignKey(o => o.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-
             builder.Entity<Orders>()
                  .HasOne(o => o.Car)
                  .WithMany(c => c.Orders)
                  .HasForeignKey(o => o.CarId);
-
-            builder.Entity<Clients>()
-                .HasOne(c => c.Car)
-                .WithMany(o => o.Clients)
-                .HasForeignKey(c => c.CarId)
-                .OnDelete(DeleteBehavior.NoAction);
-            
 
             builder.Entity<Cars>().HasKey(c => new { c.CarId });
             builder.Entity<Clients>().HasKey(c => new { c.ClientId });

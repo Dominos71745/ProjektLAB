@@ -71,7 +71,7 @@ namespace ProjektLAB.Controllers
             {
                 car.CategoryName = selectedCategory.CategoryName;
             }
-            // Add a new car to the database
+            
             _context.Cars.Add(car);
             _context.SaveChanges();
 
@@ -81,6 +81,7 @@ namespace ProjektLAB.Controllers
         public async Task<IActionResult> Reservation(int id)
         {
             var car = _context.Cars.Find(id);
+
             if (car == null)
             {
                 ModelState.AddModelError("CarId", "Invalid car selected.");
@@ -93,7 +94,7 @@ namespace ProjektLAB.Controllers
             {
                 Car = car,
                 Client = new Clients(), 
-                User = user
+                User = user,
             };
 
             return View("Reservation", viewModel);
@@ -130,12 +131,6 @@ namespace ProjektLAB.Controllers
                     City = viewModel.User.City,
                 };
 
-                var loggedInResultViewModel = new ReservationViewModel
-                {
-                    Car = existingCar,
-                    User = user
-                };
-
 
                 Orders order = new Orders
                 {
@@ -145,6 +140,13 @@ namespace ProjektLAB.Controllers
                     CarId = carId,
                     PickupDate = viewModel.Order.PickupDate,
                     ReturnDate = viewModel.Order.ReturnDate
+                };
+
+                var loggedInResultViewModel = new ReservationViewModel
+                {
+                    Car = existingCar,
+                    User = user,
+                    Order = order
                 };
 
                 // Add the order to the database
@@ -164,7 +166,6 @@ namespace ProjektLAB.Controllers
                     City = viewModel.Client.City,
                     PhoneNumber = viewModel.Client.PhoneNumber,
                     Email = viewModel.Client.Email,
-                    CarId = carId,
                 };
 
                 _context.Clients.Add(client);
@@ -189,7 +190,8 @@ namespace ProjektLAB.Controllers
                 var notLoggedInResultViewModel = new ReservationViewModel
                 {
                     Client = client,
-                    Car = existingCar
+                    Car = existingCar,
+                    Order = order
                 };
 
                 _context.Orders.Add(order);
@@ -273,7 +275,7 @@ namespace ProjektLAB.Controllers
             }
 
             // Sprawdzanie czy użytkownik "administator" istnieje
-            var user = await _userManager.FindByEmailAsync("admin@example.com");
+            var user = await _userManager.FindByEmailAsync("admin@admin.pl");
 
             if (user == null)
             {

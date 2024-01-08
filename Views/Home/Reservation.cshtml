@@ -13,20 +13,19 @@
     <form asp-action="Reservation" method="post">
         <input type="hidden" asp-for="User.Id" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)" />
         <input type="hidden" asp-for="Car.CarId" />
-                            <div asp-validation-summary="All">
+                         
         <div>
             <label asp-for="Order.PickupDate">Pickup Date:</label>
-            <input type="date" asp-for="Order.PickupDate" format="yyyy-MM-dd" />
+            <input type="date" asp-for="Order.PickupDate" format="yyyy-MM-dd" required />
             <span asp-validation-for="Order.PickupDate" class="text-danger"></span>
         </div>
         <div>
             <label asp-for="Order.ReturnDate">Return Date:</label>
-            <input type="date" asp-for="Order.ReturnDate" format="yyyy-MM-dd" />
+            <input type="date" asp-for="Order.ReturnDate" format="yyyy-MM-dd" required />
             <span asp-validation-for="Order.ReturnDate" class="text-danger"></span>
         </div>
 
         <button type="submit">Rent</button>
-        </div>
     </form>
 }
 else
@@ -34,15 +33,14 @@ else
     <form asp-action="Reservation" method="post" >
         <input type="hidden" asp-for="Car.CarId" />
 
-                    <div asp-validation-summary="All">
         <div>
             <label asp-for="Order.PickupDate">Pickup Date:</label>
-            <input type="date" asp-for="Order.PickupDate" format="yyyy-MM-dd" />
+            <input type="date" asp-for="Order.PickupDate" format="yyyy-MM-dd" required />
             <span asp-validation-for="Order.PickupDate" class="text-danger"></span>
         </div>
         <div>
             <label asp-for="Order.ReturnDate">Return Date:</label>
-            <input type="date" asp-for="Order.ReturnDate" format="yyyy-MM-dd" />
+            <input type="date" asp-for="Order.ReturnDate" format="yyyy-MM-dd" required />
             <span asp-validation-for="Order.ReturnDate" class="text-danger"></span>
         </div>
 
@@ -80,7 +78,6 @@ else
                 <label asp-for="Client.Email">Email:</label>
                 <input asp-for="Client.Email" />
                 <span asp-validation-for="Client.Email" class="text-danger"></span>
-            </div>
             </div>
             <button type="submit">Rent</button>
     </form>
